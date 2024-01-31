@@ -1,7 +1,11 @@
-import logo from './logo.svg';
-import './App.css';
+//  This will be the page the user lands on after logging in and where they can add servers.
+// It is also the root URL so if a user attempts to enter the application without logging in
+// they will need to be redirected to the login page to create a session (we will probably just use local storage)
 
-function App() {
+import logo from '../images/logo.svg';
+import '../styles/Dashboard.css'
+
+function Dashboard() {
   return (
     <div className="App">
       <header className="App-header">
@@ -22,4 +26,4 @@ function App() {
   );
 }
 
-export default App;
+export default Dashboard;
