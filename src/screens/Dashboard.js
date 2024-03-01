@@ -51,10 +51,16 @@ function Dashboard() {
     };
 
     window.addEventListener('keydown', handleEsc);
+    const session = localStorage.getItem('session');
+    if (!session) {
+      navigate('/login');
+    } else {
+      RequestHandler('servers', { username: localStorage.getItem('session').split('|')[0], password: localStorage.getItem('session').split('|')[1] }).then(response => {
+        setServers(response.servers)
+      })
 
-    RequestHandler('servers', { username: localStorage.getItem('session').split('|')[0], password: localStorage.getItem('session').split('|')[1] }).then(response => {
-      setServers(response.servers)
-    })
+    }
+
 
 
     return () => {
