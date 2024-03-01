@@ -1,38 +1,196 @@
-.App {
+body {
+  height: 100%;
+  background-color: #E4E4E4;
+}
+
+
+.dashboard {
+  font-family: Arial, sans-serif;
+  background-color: #E4E4E4;
+  font-family: "Abhaya Libre", serif;
+  font-size: 20px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+}
+
+.brand-logo2 {
+  margin-left: 0px;
+  margin-top: -5px;
+
+  /* Add your branding styles here */
+  width: 250px;
+  height: 58px;
+}
+
+.hamburger-icon {
+  width: 90px;
+  height: 40px;
+}
+
+.hamburger-icon, .sidebar-icon {
+  cursor: pointer;
+}
+
+/* Initially position the sidebar off the screen to the right */
+.sidebar {
+  position: fixed;
+  right: -300px; /* Adjust this value based on the sidebar's width */
+  top: 0;
+  width: 250px;
+  height: 100%;
+  background-color: black;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1100;
+  transition: right 0.3s ease-in-out; /* Animation effect */
+}
+
+/* Add a class that positions the sidebar on the screen */
+.sidebar-open {
+  right: 0;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  cursor: pointer;
+  padding: 10px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid white
+}
+
+.sidebar-item span {
+  margin-left: 10px;
+}
+
+.sidebar-icon {
+  fill: white;
+  font-size: 25px;
+}
+
+.content {
+  margin-top: 100px;
+  padding: 20px;
+  background-color: #E4E4E4;
+  font-weight: bold;
+  opacity: .6;
+}
+
+.blur {
+  filter: blur(4px);
+}
+
+.no-servers {
+  text-align: center;
+  margin-top: 50px;
+  color: rgb(83, 83, 83);
+  margin-top: 400px;
+}
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1200; /* Ensure it's above everything else */
+}
+
+.modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 500px; /* Adjust based on your preference */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  
+  margin-bottom: 20px;
+}
+
+.close-btn {
+  cursor: pointer;
+  background: none;
+  border: none;
+  margin-left: auto;
+}
+
+.add-btn {
+  align-self: flex-start;
+  gap: 10px;
+  background-color: #016749;
+  color: white;
+  padding: 10px;
+  padding-left: 50px;
+  padding-right: 50px;
+  border: none;
+  cursor: pointer;
+  border-radius: 15px;
+  margin-top: 10px;
+}
+
+.add-btn:active {
+  background-color: #01533b;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.modal-content span {
+  color: black;
+  font-weight: bold;
+  font-size: 25px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.modal-content input {
+  display: block;
+  width: 96%;
+  padding: 15px;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin: 10px 0;
+  margin-top: 25px;
+  background-color: #ebebeb;
+  border: none;
+  border-radius: 4px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.modal-content select {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin: 10px 0;
+  margin-top: 25px;
+  background-color: #ebebeb;
+  border: none;
+  border-radius: 4px;
 }

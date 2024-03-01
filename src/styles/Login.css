@@ -1,0 +1,84 @@
+.login-page {
+    background-color: #F3F3F3;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    /* background-color: #f8f9fa; */
+
+}
+
+.brand-logo {
+    margin-left: 15px;
+    margin-top: -5px;
+
+    /* Add your branding styles here */
+    width: 250px;
+    height: 58px;
+}
+
+.login-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+    width: 300px;
+    font-family: "Abhaya Libre", serif;
+    font-size: 22px
+}
+
+.signin-text {
+    margin-top: -4px;
+    margin-bottom: -1px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin: 10px 0;
+    margin-top: 25px;
+    background-color: #ebebeb;
+    border: none;
+    border-radius: 4px;
+}
+
+.login-button {
+    width: 100%;
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #016749;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+
+}
+
+.login-button:active {
+    background-color: #00583e;
+}
+
+.error-message {
+    color: red;
+    border: 1px solid red;
+    padding: 10px;
+    background-color: rgb(255, 204, 204);
+    margin-bottom: 10px;
+    text-align: center;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: -1px;
+    font-size: 15px;
+}
