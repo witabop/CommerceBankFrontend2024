@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 function ServerItem({ server, onDelete, onUpdate, applications }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [name, setName] = useState(server.name);
-    const [purpose, setPurpose] = useState(server.purpose);
+    const [application, setApplication] = useState(server.application);
     const [ip, setIp] = useState(server.ip);
     const [ipstatus, setIpStatus] = useState(server.ipstatus); // New state for ipStatus
     const [port, setPort] = useState(server.port); // New state for ipStatus
@@ -16,7 +16,7 @@ function ServerItem({ server, onDelete, onUpdate, applications }) {
 
     const handleIpStatusToggle = () => {
         setIpStatus(!ipstatus); // Toggle the boolean value
-        onUpdate(server.id, { name, purpose, ip, ipstatus: !ipstatus, port, sourceIP, sourceName }); // Update the server status
+        onUpdate(server.id, { name, application, ip, ipstatus: !ipstatus, port, sourceIP, sourceName }); // Update the server status
     };
 
 
@@ -25,7 +25,7 @@ function ServerItem({ server, onDelete, onUpdate, applications }) {
             <div className="server-summary" onClick={() => setIsExpanded(!isExpanded)}>
                 <div className="server-info" style={{ color: server.ipstatus ? '#016749' : 'red' }}>
                     <p style={{ marginLeft: 5 }}><strong>Hostname:</strong> {server.name}</p>
-                    <p><strong>Application:</strong> {server.purpose}</p>
+                    <p><strong>Application:</strong> {server.application}</p>
                     <p><strong>IP Address:</strong> {server.ip}:{server.port}</p>
                 </div>
                 <div className="expand-icon">{isExpanded ? '▲' : '▼'}</div>
@@ -34,35 +34,35 @@ function ServerItem({ server, onDelete, onUpdate, applications }) {
                 <div className="server-details">
                     <div className='server-block'>
                         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Update  Hostname" />
-                        <button onClick={() => onUpdate(server.id, { name, purpose, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
+                        <button onClick={() => onUpdate(server.id, { name, application, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
                     </div>
                     <div className='server-block'>
 
-                        <select value={purpose} onChange={(e) => setPurpose(e.target.value)}>
+                        <select value={application} onChange={(e) => setApplication(e.target.value)}>
                             {applications.map((applicationOption, index) => (
                                 <option key={index} value={applicationOption}>{applicationOption}</option>
                             ))}
                         </select>
-                        <button onClick={() => onUpdate(server.id, { name, purpose, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
+                        <button onClick={() => onUpdate(server.id, { name, application, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
 
                     </div>
                     <div className='server-block'>
                         <input value={ip} onChange={(e) => setIp(e.target.value)} placeholder="Update IP" />
-                        <button onClick={() => onUpdate(server.id, { name, purpose, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
+                        <button onClick={() => onUpdate(server.id, { name, application, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
                     </div>
                     <div className='server-block'>
                         <input value={port} onChange={(e) => setPort(e.target.value)} placeholder="Port" />
-                        <button onClick={() => onUpdate(server.id, { name, purpose, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
+                        <button onClick={() => onUpdate(server.id, { name, application, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
                     </div>
 
                     <p>Source IP</p>
                     <div className='server-block'>
                         <input value={sourceName} onChange={(e) => setSourceName(e.target.value)} placeholder="Update Source Hostname" />
-                        <button onClick={() => onUpdate(server.id, { name, purpose, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
+                        <button onClick={() => onUpdate(server.id, { name, application, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
                     </div>
                     <div className='server-block'>
                         <input value={sourceIP} onChange={(e) => setSourceIP(e.target.value)} placeholder="Update IP" />
-                        <button onClick={() => onUpdate(server.id, { name, purpose, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
+                        <button onClick={() => onUpdate(server.id, { name, application, ip, ipstatus, port, sourceIP, sourceName })}>Update</button>
                     </div>
 
                     <div>

@@ -23,8 +23,8 @@ async function RequestHandler(route, data) {
             if (isMock) {
                 return {
                     servers: [
-                        { id: 1709250097200, name: 'Puppet Service', purpose: 'PUP', ip: '192.168.20.1', ipstatus: true, port: 8000, sourceIP: '127.0.0.1', sourceName: 'PUPHost' },
-                        { id: 1709250104457, name: 'Files Now', purpose: 'RFS', ip: '192.168.1.1', ipstatus: false, port: 8080, sourceIP: '10.0.0.1', sourceName: 'RFSHost' }
+                        { id: 1709250097200, name: 'Puppet Service', application: 'PUP', ip: '192.168.20.1', ipstatus: true, port: 8000, sourceIP: '127.0.0.1', sourceName: 'PUPHost' },
+                        { id: 1709250104457, name: 'Files Now', application: 'RFS', ip: '192.168.1.1', ipstatus: false, port: 8080, sourceIP: '10.0.0.1', sourceName: 'RFSHost' }
                     ]
                 }
             } else {
@@ -40,7 +40,7 @@ async function RequestHandler(route, data) {
                 const response = await axios.post('/add', {
                     id: data.id,
                     name: data.destinationHostname,
-                    purpose: data.newServerApplication,
+                    application: data.newServerApplication,
                     ip: data.destinationIp,
                     port: data.destinationPort,
                     sourceName: data.sourceHostname,
@@ -60,7 +60,7 @@ async function RequestHandler(route, data) {
                 const response = await axios.post('/update', {
                     id: data.id,
                     name: data.destinationHostname,
-                    purpose: data.newServerApplication,
+                    application: data.newServerApplication,
                     ip: data.destinationIp,
                     port: data.destinationPort,
                     sourceName: data.sourceHostname,

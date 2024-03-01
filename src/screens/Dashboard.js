@@ -34,7 +34,7 @@ function Dashboard() {
   const [destinationPort, setDestinationPort] = useState('');
   const [sourceHostname, setSourceHostname] = useState('');
   const [sourceIP, setSourceIp] = useState('');
-  const [newServerApplication, setNewServerApplication] = useState('');
+  const [newServerApplication, setNewServerApplication] = useState('API');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -96,7 +96,7 @@ function Dashboard() {
     const newServer = {
       id: Date.now(), // Simple way to generate a unique ID, we might end up using something else later
       name: destinationHostname,
-      purpose: newServerApplication,
+      application: newServerApplication,
       ip: destinationIp,
       port: destinationPort,
       sourceName: sourceHostname,
