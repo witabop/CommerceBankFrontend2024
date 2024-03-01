@@ -15,16 +15,14 @@ import logo from '../images/commercelogo.png';
 import ServerItem from '../components/ServerItem';
 import RequestHandler from '../components/RequestHandler';
 
-
+// all the applications the user has access to,is returned in the auth call.
+let applications = []
 
 
 function Dashboard() {
 
   // Example server data
   let initialServers = []
-
-  // all the applications the user has access to,is returned in the auth call.
-  const applications = localStorage.getItem('apps').split(',')
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [servers, setServers] = useState(initialServers); // This array will be used to store server objects
@@ -41,7 +39,10 @@ function Dashboard() {
     const session = localStorage.getItem('session');
     if (!session) {
       navigate('/login');
+    } else {
+      applications = localStorage.getItem('apps').split(',')
     }
+
   }, [navigate]);
 
   useEffect(() => {
