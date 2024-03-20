@@ -80,7 +80,7 @@ function Dashboard() {
 
   const updateServer = (id, updatedInfo) => {
     setServers(servers.map(server => server.id === id ? { ...server, ...updatedInfo } : server));
-    RequestHandler('update', { id: id, ...updatedInfo })
+    RequestHandler('add', { id: id, ...updatedInfo })
   };
 
 

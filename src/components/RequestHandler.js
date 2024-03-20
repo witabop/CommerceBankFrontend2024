@@ -13,9 +13,9 @@ async function RequestHandler(route, data) {
             if (isMock) {
                 console.log(data)
                 if (data.username === 'user' && data.password === 'pass')
-                    return { authenticated: true, applications: ['API', 'PUP', 'RFS', 'TBD', 'INF', 'TCS', 'MQS'] }
+                    return { authenticated: true, isAdmin: true, applications: ['API', 'PUP', 'RFS', 'TBD', 'INF', 'TCS', 'MQS'] }
                 else
-                    return { authenticated: false, applications: [] }
+                    return { authenticated: false, isAdmin: false, applications: [] }
             } else {
                 const response = await axios.get(`/auth?username=${data.username}&password=${data.password}`);
                 const parsedResponse = {}; // parse response data to match mock form
@@ -56,27 +56,37 @@ async function RequestHandler(route, data) {
 
                 return parsedResponse;
             }
-        case 'update':
+        case 'users':
+            if (isMock) {
+                if (data.isAdmin) {
+                    return [{ id: 123, applications: ['PUP', 'RFS'] }, { id: 456, applications: ['PUP'] }]
+                } else {
+                    return [{}]
+                }
+
+            } else {
+                if (data.isAdmin) {
+                    const response = await axios.get('/users')
+                    const parsedResponse = {};
+
+                    return parsedResponse;
+                }
+
+            }
+        case 'modifyuser':
             if (isMock) {
                 return { status: true }
             } else {
-                const response = await axios.post('/update', {
-                    id: data.id,
-                    name: data.destinationHostname,
-                    application: data.newServerApplication,
-                    ip: data.destinationIp,
-                    port: data.destinationPort,
-                    sourceName: data.sourceHostname,
-                    sourceIP: data.sourceIP,
-                    ipstatus: data.ipstatus,
+                if (data.isAdmin) {
+                    const response = await axios.post('/modifyuser', {
+                        id: data.id,
+                        application: data.applications,
+                    })
+                    const parsedResponse = {};
 
-
-                })
-                const parsedResponse = {};
-
-                return parsedResponse;
+                    return parsedResponse;
+                }
             }
-
         case 'delete':
             if (isMock) {
                 return { status: true }
