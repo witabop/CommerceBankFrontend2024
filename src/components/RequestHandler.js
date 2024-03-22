@@ -11,11 +11,13 @@ async function RequestHandler(route, data) {
     switch (route) {
         case 'auth':
             if (isMock) {
-                console.log(data)
                 if (data.username === 'user' && data.password === 'pass')
-                    return { authenticated: true, isAdmin: true, applications: ['API', 'PUP', 'RFS', 'TBD', 'INF', 'TCS', 'MQS'] }
-                else
+                    return { UID: 2, authenticated: true, isAdmin: false, applications: ['API', 'PUP', 'RFS', 'TBD', 'INF', 'MQS'] }
+                else if (data.username === 'admin' && data.password === 'root') {
+                    return { UID: 1, authenticated: true, isAdmin: true, applications: ['API', 'PUP', 'RFS', 'TBD', 'INF', 'TCS', 'MQS'] }
+                } else
                     return { authenticated: false, isAdmin: false, applications: [] }
+
             } else {
                 const response = await axios.get(`/auth?username=${data.username}&password=${data.password}`);
                 const parsedResponse = {}; // parse response data to match mock form
@@ -31,7 +33,7 @@ async function RequestHandler(route, data) {
                     ]
                 }
             } else {
-                const response = await axios.get(`/servers?username=${data.username}&password=${data.password}`);
+                const response = await axios.get(`/servers?UID=${data.UID}`);
                 const parsedResponse = {}; // parse response data to match mock form
 
                 return parsedResponse;
@@ -59,9 +61,9 @@ async function RequestHandler(route, data) {
         case 'users':
             if (isMock) {
                 if (data.isAdmin) {
-                    return [{ id: 123, applications: ['PUP', 'RFS'] }, { id: 456, applications: ['PUP'] }]
+                    return [{ id: 1, applications: ['API', 'PUP', 'RFS', 'TBD', 'INF', 'TCS', 'MQS'] }, { id: 2, applications: ['PUP', 'RFS', 'TBD', 'INF', 'MQS'] }]
                 } else {
-                    return [{}]
+                    return []
                 }
 
             } else {
@@ -100,3 +102,4 @@ async function RequestHandler(route, data) {
 }
 
 export default RequestHandler;
+
