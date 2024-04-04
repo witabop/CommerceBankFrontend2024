@@ -11,18 +11,23 @@ async function RequestHandler(route, data) {
     switch (route) {
         case 'auth':
             if (isMock) {
-                if (data.username === 'user' && data.password === 'pass')
-                    return { UID: 2, authenticated: true, isAdmin: false, applications: ['API', 'PUP', 'RFS', 'TBD', 'INF', 'MQS'] }
+                if (data.username === 'user' && data.password === 'pass') {
+                    return { uid: 2, authenticated: true, admin: false, applications: ['API', 'PUP', 'RFS', 'TBD', 'INF', 'MQS'] }
+                }
+
                 else if (data.username === 'admin' && data.password === 'root') {
-                    return { UID: 1, authenticated: true, isAdmin: true, applications: ['API', 'PUP', 'RFS', 'TBD', 'INF', 'TCS', 'MQS'] }
+                    return { uid: 1, authenticated: true, admin: true, applications: ['API', 'PUP', 'RFS', 'TBD', 'INF', 'TCS', 'MQS'] }
                 } else
                     return { authenticated: false, isAdmin: false, applications: [] }
 
             } else {
-                const response = await axios.get(`/auth?username=${data.username}&password=${data.password}`);
-                const parsedResponse = {}; // parse response data to match mock form
+                const response = await axios.post(`http://localhost:8080/api/v1/users/auth`, {
+                    username: data.username,
+                    password: data.password
+                });
+                console.log(response)
 
-                return parsedResponse;
+                return response.data
             }
         case 'servers':
             if (isMock) {

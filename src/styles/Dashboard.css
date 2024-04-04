@@ -233,3 +233,38 @@ body {
 .modal-block button:active {
   background-color: #01533b
 }
+
+.search-area {
+
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  gap: 10px; 
+  margin-left: -15px;
+  margin-top: -10px;
+}
+
+.search-area select, .search-area input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.sort-button {
+  background-color: #ccc; /* Default grey */
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 10px 20px 10px 20px;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.sort-button.green {
+  background-color: #016749;
+}
+
+.sort-button.red {
+  background-color: red;
+}

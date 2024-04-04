@@ -23,12 +23,11 @@ function Login() {
         event.preventDefault();
 
         const response = await RequestHandler('auth', { username: username, password: password })
-        console.log(response)
 
         if (response.authenticated) {
-            localStorage.setItem('session', `${response.UID}`);
+            localStorage.setItem('session', `${response.uid}`);
             localStorage.setItem('apps', response.applications.toString());
-            localStorage.setItem('admin', response.isAdmin);
+            localStorage.setItem('admin', response.admin);
             navigate('/');
         } else {
             setError('Incorrect username or password.');

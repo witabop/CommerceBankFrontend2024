@@ -41,6 +41,10 @@ function Dashboard() {
   const [RemovePrimedApplication, setRemovePrimedApplication] = useState('');
   const [addPrimedApplication, setAddPrimedApplication] = useState('');
   const [effectRan, setEffectRan] = useState(false);
+  const [searchCriteria, setSearchCriteria] = useState('hostname'); // Default criteria
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortAttribute, setSortAttribute] = useState('name');
+  const [sortDirection, setSortDirection] = useState(0); // 0: none, 1: ascending, -1: descending
   const navigate = useNavigate();
 
   window.remove = RemovePrimedApplication;
@@ -54,15 +58,10 @@ function Dashboard() {
     selectedUser = users.findIndex(item => item.id === userID);
 
     unusedApps = possibleApplications.filter(app => !users[selectedUser].applications.includes(app));
-    console.log(unusedApps)
-
   }
 
   useEffect(() => {
     if (users.length > 0 && !effectRan) {
-      console.log(users[selectedUser].applications[0])
-      console.log(unusedApps[0])
-
       setRemovePrimedApplication(users[selectedUser].applications[0]);
       setAddPrimedApplication(unusedApps[0]);
       setEffectRan(true);
@@ -204,6 +203,23 @@ function Dashboard() {
     exportFromJSON({ data: servers, fileName, exportType })
   }
 
+  const sortedServers = sortDirection === 0 ? servers : structuredClone(servers).sort((a, b) => {
+    if (!sortAttribute || sortDirection === 0) return 0; // No sorting
+
+    let compareA = a[sortAttribute];
+    let compareB = b[sortAttribute];
+
+    if (sortAttribute.includes('Ip')) {
+      compareA = compareA.split('.').map(num => (`000${num}`).slice(-3)).join('.');
+      compareB = compareB.split('.').map(num => (`000${num}`).slice(-3)).join('.');
+    }
+
+    if (compareA < compareB) return sortDirection === 1 ? -1 : 1;
+    if (compareA > compareB) return sortDirection === 1 ? 1 : -1;
+    return 0;
+  });
+  console.log(sortedServers)
+  console.log(servers)
 
   return (
     <div className="dashboard">
@@ -308,10 +324,56 @@ function Dashboard() {
       )}
 
       <main className={isSidebarOpen ? 'content blur' : 'content'}>
+        <div className="search-area">
+          <select value={searchCriteria} onChange={(e) => setSearchCriteria(e.target.value)}>
+            <option value="hostname">Hostname</option>
+            <option value="hostIp">Host IP</option>
+            <option value="sourceIp">Source IP</option>
+            {/* Add more criteria as needed */}
+          </select>
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <div className="sort-area">
+            <select value={sortAttribute} onChange={(e) => setSortAttribute(e.target.value)}>
+              <option value="name">Hostname</option>
+              <option value="sourceName">Source Hostname</option>
+              <option value="ip">Host IP</option>
+              <option value="sourceIP">Source IP</option>
+              {/* Add more sorting attributes as needed */}
+            </select>
+            <button
+              onClick={() => setSortDirection(sortDirection === 1 ? -1 : sortDirection + 1)}
+              className={`sort-button ${sortDirection === 1 ? 'green' : sortDirection === -1 ? 'red' : ''}`}
+            >
+              {sortDirection === 0 ? "-" : sortDirection === 1 ? "↑" : "↓"}
+            </button>
+          </div>
+        </div>
+
         {servers.length > 0 ? (
-          servers.map(server => (
+
+          sortedServers.filter(server => {
+            if (!searchQuery) return true; // If no query, don't filter out anything
+            const regex = new RegExp(searchQuery, 'i'); // Case insensitive search
+            switch (searchCriteria) {
+              case 'hostname':
+                return regex.test(server.name);
+              case 'hostIp':
+                return regex.test(server.ip);
+              case 'sourceIp':
+                return regex.test(server.sourceIp);
+              // Add more cases for different criteria later
+              default:
+                return true;
+            }
+          }).map(server => (
             <ServerItem key={server.id} server={server} onDelete={deleteServer} onUpdate={updateServer} applications={applications} />
           ))
+
         ) : (
           <div className="no-servers">Looks like there's nothing here yet...</div>
         )}
