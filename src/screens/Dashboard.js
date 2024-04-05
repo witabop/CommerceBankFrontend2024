@@ -328,7 +328,9 @@ function Dashboard() {
           <select value={searchCriteria} onChange={(e) => setSearchCriteria(e.target.value)}>
             <option value="hostname">Hostname</option>
             <option value="hostIp">Host IP</option>
+            <option value="sourceHostname">Source Hostname</option>
             <option value="sourceIp">Source IP</option>
+            <option value="app">Application Name</option>
             {/* Add more criteria as needed */}
           </select>
           <input
@@ -343,6 +345,7 @@ function Dashboard() {
               <option value="sourceName">Source Hostname</option>
               <option value="ip">Host IP</option>
               <option value="sourceIP">Source IP</option>
+              <option value="application">Application Name</option>
               {/* Add more sorting attributes as needed */}
             </select>
             <button
@@ -365,7 +368,11 @@ function Dashboard() {
               case 'hostIp':
                 return regex.test(server.ip);
               case 'sourceIp':
-                return regex.test(server.sourceIp);
+                return regex.test(server.sourceIP);
+              case 'soureHostname':
+                return regex.test(server.sourceName);
+              case 'app':
+                return regex.test(server.application);
               // Add more cases for different criteria later
               default:
                 return true;
