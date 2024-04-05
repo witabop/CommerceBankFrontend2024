@@ -342,8 +342,8 @@ function Dashboard() {
           <div className="sort-area">
             <select value={sortAttribute} onChange={(e) => setSortAttribute(e.target.value)}>
               <option value="name">Hostname</option>
-              <option value="sourceName">Source Hostname</option>
               <option value="ip">Host IP</option>
+              <option value="sourceName">Source Hostname</option>
               <option value="sourceIP">Source IP</option>
               <option value="application">Application Name</option>
               {/* Add more sorting attributes as needed */}
