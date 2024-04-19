@@ -15,12 +15,14 @@
 
 
 .server-info {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 280px;
+
 }
 
 .server-info p {
-    margin: 5px 0 5px 30px;
+    margin: 5px 0 5px 0px;
 }
 
 .expand-icon {
