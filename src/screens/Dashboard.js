@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import exportFromJSON from 'export-from-json'
 import '../styles/Dashboard.css'; // Make sure to create this CSS file for styling
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faScrewdriverWrench } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faCircleUp, faRocket, faScrewdriverWrench, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { faServer } from '@fortawesome/free-solid-svg-icons'
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons'
@@ -30,6 +30,7 @@ function Dashboard() {
   const [servers, setServers] = useState(initialServers);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalBOpen, setIsModalBOpen] = useState(false);
+  const [isModalCOpen, setIsModalCOpen] = useState(false);
   const [destinationHostname, setDestinationHostname] = useState('');
   const [destinationIp, setDestinationIP] = useState('');
   const [destinationPort, setDestinationPort] = useState('');
@@ -45,6 +46,10 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortAttribute, setSortAttribute] = useState('name');
   const [sortDirection, setSortDirection] = useState(0); // 0: none, 1: ascending, -1: descending
+  const [mode, setMode] = useState('add'); // 'add' or 'delete'
+  const [newAppName, setNewAppName] = useState('');
+  const [adminApplications, setApplications] = useState(['API', 'PUP', 'RFS', 'TBD', 'INF', 'TCS', 'MQS']); // Example initial apps
+  const [selectedApp, setSelectedApp] = useState('');
   const navigate = useNavigate();
 
   window.remove = RemovePrimedApplication;
@@ -57,23 +62,8 @@ function Dashboard() {
   if (users.length > 0) {
     selectedUser = users.findIndex(item => item.id === userID);
 
-    unusedApps = possibleApplications.filter(app => !users[selectedUser].applications.includes(app));
+    unusedApps = adminApplications.filter(app => !users[selectedUser].applications.includes(app));
   }
-
-  useEffect(() => {
-    if (users.length > 0 && !effectRan) {
-      setRemovePrimedApplication(users[selectedUser].applications[0]);
-      setAddPrimedApplication(unusedApps[0]);
-      setEffectRan(true);
-    }
-
-  }, [users, effectRan, selectedUser, unusedApps])
-
-  useEffect(() => {
-    setAddPrimedApplication(document.getElementById('addapp')?.value);
-    setRemovePrimedApplication(document.getElementById('removeapp')?.value);
-  }, [users, userID, isModalBOpen])
-
 
 
 
@@ -96,6 +86,7 @@ function Dashboard() {
         RequestHandler('users', { isAdmin }).then(response => {
 
           setUsers(response);
+          // will also set application list here once it can be requested
 
         })
       }
@@ -116,6 +107,29 @@ function Dashboard() {
 
 
   }, [navigate]);
+
+  useEffect(() => {
+    if (users.length > 0 && !effectRan) {
+      setRemovePrimedApplication(users[selectedUser].applications[0]);
+      setAddPrimedApplication(unusedApps[0]);
+      setEffectRan(true);
+    }
+
+  }, [users, effectRan, selectedUser, unusedApps])
+
+  useEffect(() => {
+    setAddPrimedApplication(document.getElementById('addapp')?.value);
+    setRemovePrimedApplication(document.getElementById('removeapp')?.value);
+  }, [users, userID, isModalBOpen])
+
+
+  useEffect(() => {
+    setSelectedApp(adminApplications[0]);
+    RequestHandler('modifyapps', { isAdmin: isAdmin, applications: adminApplications });
+    let appcheck = adminApplications.length < 1 ? 'add' : mode;
+    setMode(appcheck)
+  }, [adminApplications])
+
 
 
   const deleteServer = (id) => {
@@ -148,9 +162,18 @@ function Dashboard() {
     setUserID(users[0].id);
   };
 
+
+  const openModalC = () => {
+    setIsSidebarOpen(false);
+
+    setIsModalCOpen(true);
+    // setUserID(users[0].id);
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setIsModalBOpen(false);
+    setIsModalCOpen(false);
   };
 
   const handleAddServer = (e) => {
@@ -196,6 +219,28 @@ function Dashboard() {
 
   }
 
+  const toggleMode = (selectedMode) => {
+    if (selectedMode === 'delete') {
+      adminApplications.length > 0 && setMode(selectedMode);
+    } else {
+      setMode(selectedMode);
+    }
+
+  };
+
+  const addApp = () => {
+    if (newAppName.length === 3) {
+      setApplications([...adminApplications, newAppName.toUpperCase()]);
+      setNewAppName(''); // Clear input field
+    }
+
+  };
+
+  const deleteApp = () => {
+    setApplications(adminApplications.filter(app => app !== selectedApp));
+    // Reset selected app
+  };
+
   const exportData = () => {
     const fileName = 'whitelist'
     const exportType = exportFromJSON.types.xls
@@ -218,8 +263,6 @@ function Dashboard() {
     if (compareA > compareB) return sortDirection === 1 ? 1 : -1;
     return 0;
   });
-  console.log(sortedServers)
-  console.log(servers)
 
   return (
     <div className="dashboard">
@@ -239,18 +282,74 @@ function Dashboard() {
         <div className="sidebar-item" onClick={() => openModal()}>
           <FontAwesomeIcon icon={faServer} /><span>Add New Server</span>
         </div>
-        <div className="sidebar-item" onClick={() => exportData()}>
-          <FontAwesomeIcon icon={faFileArrowDown} /><span>Export</span>
-        </div>
         {isAdmin && (
           <div className="sidebar-item" onClick={() => openModalB()}>
             <FontAwesomeIcon icon={faScrewdriverWrench} /><span>Manage Users</span>
           </div>
         )}
+        {isAdmin && (
+          <div className="sidebar-item" onClick={() => openModalC()}>
+            <FontAwesomeIcon icon={faRocket} /><span>Manage Application</span>
+          </div>
+        )}
+        <div className="sidebar-item" onClick={() => exportData()}>
+          <FontAwesomeIcon icon={faFileArrowDown} /><span>Export</span>
+        </div>
         <div className="sidebar-item" onClick={() => { localStorage.removeItem("apps"); localStorage.removeItem("session"); localStorage.removeItem("admin"); navigate("/login") }}>
           <span>Logout</span>
         </div>
       </div>
+
+      {/* Application Management Modal */}
+      {isModalCOpen && (
+        <div className="modal-overlay">
+          <div className="modal" style={{ width: "400px" }}>
+            <div className="modal-header">
+              <button className="close-btn" onClick={closeModal}>X</button>
+            </div>
+            <div className='modal-content'>
+              <span>Manage Application</span>
+              <div className='button-block'>
+                <button
+                  onClick={() => toggleMode('add')}
+                  className={`mode-button ${mode === 'add' ? 'green' : ''}`}
+                >Add</button>
+                <button
+                  onClick={() => toggleMode('delete')}
+                  className={`mode-button ${mode === 'delete' ? 'red' : ''}`}
+                >Delete</button>
+              </div>
+              {(mode === 'add' || adminApplications.length < 1) && (
+                <div className='modal-block-app'>
+                  <input
+                    type="text"
+                    value={newAppName}
+                    onChange={(e) => setNewAppName(e.target.value)}
+                    maxLength="3"
+                    placeholder='APP...'
+                    style={{ textTransform: "uppercase" }}
+                  />
+                  <div className='arrow-up-button' onClick={addApp}>
+                    <FontAwesomeIcon fontSize={29} width={50} height={50} icon={faCircleUp} />
+                  </div>
+                </div>
+              )}
+              {(mode === 'delete' && adminApplications.length > 0) && (
+                <div className='modal-block-app'>
+                  <select value={selectedApp} onChange={(e) => setSelectedApp(e.target.value)}>
+                    {adminApplications.map(app => (
+                      <option key={app} value={app}>{app}</option>
+                    ))}
+                  </select>
+                  <div className='trash-button' onClick={deleteApp}>
+                    <FontAwesomeIcon fontSize={25} width={50} height={50} icon={faTrash} />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* User Management Modal */}
       {isModalBOpen && (
@@ -297,7 +396,7 @@ function Dashboard() {
       {/* Add Server Modal */}
       {isModalOpen && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="modal" >
             <div className="modal-header">
 
               <button className="close-btn" onClick={closeModal}>X</button>

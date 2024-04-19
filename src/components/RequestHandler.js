@@ -63,6 +63,22 @@ async function RequestHandler(route, data) {
 
                 return parsedResponse;
             }
+
+        case 'modifyapps':
+            if (isMock) {
+                if (data.isAdmin) {
+                    return { status: true }
+                } else {
+                    return {}
+                }
+            } else {
+                const response = await axios.post('/modifyapps', {
+                    updatedApps: data.applications
+                })
+                const parsedResponse = {};
+                return parsedResponse;
+            }
+
         case 'users':
             if (isMock) {
                 if (data.isAdmin) {

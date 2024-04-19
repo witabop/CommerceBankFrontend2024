@@ -256,9 +256,10 @@ body {
   padding: 10px;
   cursor: pointer;
   border-radius: 5px;
-  padding: 10px 20px 10px 20px;
+  padding: 5px 15px 8px 15px;
   margin-left: 10px;
   font-weight: bold;
+  font-size: 20px;
 }
 
 .sort-button.green {
@@ -268,3 +269,91 @@ body {
 .sort-button.red {
   background-color: red;
 }
+
+.button-block {
+  margin-top: 20px;
+}
+
+.mode-button {
+  background-color: #ccc; /* Default grey */
+  color: darkgrey;
+  border: none;
+  padding: 20px;
+  margin-right: 20px; /* Space between buttons */
+  padding-left: 40px;
+  padding-right: 40px;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+.mode-button.green {
+  background-color: #016749;
+  color: white;
+}
+
+.mode-button.red {
+  background-color: red;
+  color: white;
+}
+
+
+.modal-content input, .modal-content select {
+  margin-right: 5px; /* Space next to buttons */
+  padding: 5px;
+}
+
+
+.modal-block-app {
+  display: flex;
+  margin-top: 20px;
+}
+
+.modal-block-app select {
+  padding: 8px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  width: 95%;
+  margin-right: 10px;
+}
+
+.modal-block-app input {
+  padding: 8px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  width: 95%;
+  margin-right: 10px;
+  /* margin-left: 30%; */
+}
+
+.modal-block-app button {
+    align-self: flex-start;
+    /* display: flex; */
+    /* flex-direction: row; */
+    /* gap: 10px; */
+    background-color: #016749;
+    color: white;
+    padding: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-top: 8px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    
+    
+}
+
+.trash-button {
+  color: red;
+  margin-left: auto;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.arrow-up-button {
+  color: #016749;
+  cursor: pointer;
+  margin-top: 12px;
+  
+}
+
