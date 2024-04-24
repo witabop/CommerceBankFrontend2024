@@ -42,9 +42,9 @@ function Dashboard() {
   const [RemovePrimedApplication, setRemovePrimedApplication] = useState('');
   const [addPrimedApplication, setAddPrimedApplication] = useState('');
   const [effectRan, setEffectRan] = useState(false);
-  const [searchCriteria, setSearchCriteria] = useState('hostname'); // Default criteria
+  const [searchCriteria, setSearchCriteria] = useState(''); // Default criteria
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortAttribute, setSortAttribute] = useState('name');
+  const [sortAttribute, setSortAttribute] = useState('');
   const [sortDirection, setSortDirection] = useState(0); // 0: none, 1: ascending, -1: descending
   const [mode, setMode] = useState('add'); // 'add' or 'delete'
   const [newAppName, setNewAppName] = useState('');
@@ -425,6 +425,7 @@ function Dashboard() {
       <main className={isSidebarOpen ? 'content blur' : 'content'}>
         <div className="search-area">
           <select value={searchCriteria} onChange={(e) => setSearchCriteria(e.target.value)}>
+            <option value="" selected>Search by</option>
             <option value="hostname">Hostname</option>
             <option value="hostIp">Host IP</option>
             <option value="sourceHostname">Source Hostname</option>
@@ -434,12 +435,13 @@ function Dashboard() {
           </select>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="server..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <div className="sort-area">
             <select value={sortAttribute} onChange={(e) => setSortAttribute(e.target.value)}>
+              <option value="" selected>Sort by</option>
               <option value="name">Hostname</option>
               <option value="ip">Host IP</option>
               <option value="sourceName">Source Hostname</option>
