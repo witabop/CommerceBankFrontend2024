@@ -81,17 +81,19 @@ function Dashboard() {
       RequestHandler('servers', { isAdmin: isAdmin, uid: localStorage.getItem('session') }).then(response => {
         setServers(response.servers)
       })
+      RequestHandler('auth', { username: localStorage.getItem('username'), password: localStorage.getItem('password') }).then(response => {
+        // console.log(response)
+        console.log(response)
+        applications = response.applications
+        setApplications(response.applications)
+      })
 
       if (isAdmin) {
         RequestHandler('users', { isAdmin }).then(response => {
           setUsers(response);
 
         })
-        RequestHandler('auth', { username: localStorage.getItem('username'), password: localStorage.getItem('password') }).then(response => {
-          // console.log(response)
-          console.log(response)
-          setApplications(response.applications)
-        })
+
       }
     }
 

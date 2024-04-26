@@ -86,7 +86,7 @@ async function RequestHandler(route, data) {
             if (!isMock) {
                 return { status: true }
             } else {
-
+                console.log(data)
                 const response = await axios.post('http://localhost:8080/api/v1/servers/add', {
                     sid: data.id,
                     destinationHostName: data.name,
