@@ -56,7 +56,7 @@ function ServerItem({ server, onDelete, onUpdate, applications }) {
 
                         <select value={application} onChange={(e) => setApplication(e.target.value)}>
                             {applications.map((applicationOption, index) => (
-                                <option key={index} value={applicationOption}>{applicationOption}</option>
+                                <option key={index} value={applicationOption.appName}>{applicationOption.appName}</option>
                             ))}
                         </select>
                         <button onClick={() => handleIPPort(document.getElementById(server.id).value)}>Update</button>

@@ -26,8 +26,10 @@ function Login() {
 
         if (response.authenticated) {
             localStorage.setItem('session', `${response.uid}`);
-            localStorage.setItem('apps', response.applications.toString());
+            localStorage.setItem('apps', JSON.stringify(response.applications));
             localStorage.setItem('admin', response.admin);
+            localStorage.setItem('username', username);
+            localStorage.setItem('password', password);
             navigate('/');
         } else {
             setError('Incorrect username or password.');

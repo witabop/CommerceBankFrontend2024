@@ -48,7 +48,7 @@ function Dashboard() {
   const [sortDirection, setSortDirection] = useState(0); // 0: none, 1: ascending, -1: descending
   const [mode, setMode] = useState('add'); // 'add' or 'delete'
   const [newAppName, setNewAppName] = useState('');
-  const [adminApplications, setApplications] = useState(['API', 'PUP', 'RFS', 'TBD', 'INF', 'TCS', 'MQS']); // Example initial apps
+  const [adminApplications, setApplications] = useState([{ appId: 1, appName: 'API' }, { appId: 2, appName: 'PUP' }, { appId: 3, appName: 'RFS' }, { appId: 4, appName: 'TBD' }, { appId: 5, appName: 'INF' }, { appId: 6, appName: 'TCS' }, { appId: 7, appName: 'MQS' }]); // Example initial apps
   const [selectedApp, setSelectedApp] = useState('');
   const navigate = useNavigate();
 
@@ -60,9 +60,9 @@ function Dashboard() {
   let unusedApps;
 
   if (users.length > 0) {
-    selectedUser = users.findIndex(item => item.id === userID);
+    selectedUser = users.findIndex(item => item.uid === userID);
 
-    unusedApps = adminApplications.filter(app => !users[selectedUser].applications.includes(app));
+    unusedApps = adminApplications.filter(app => !users[selectedUser].applications.includes(app.appName));
   }
 
 
@@ -74,20 +74,23 @@ function Dashboard() {
     if (!session) {
       navigate('/login');
     } else {
-      applications = localStorage.getItem('apps').split(',');
-      setNewServerApplication(applications[0]);
+      applications = JSON.parse(localStorage.getItem('apps'))
+      setNewServerApplication(applications[0].appName);
 
       isAdmin = JSON.parse(localStorage.getItem('admin'));
-      RequestHandler('servers', { UID: localStorage.getItem('session') }).then(response => {
+      RequestHandler('servers', { isAdmin: isAdmin, uid: localStorage.getItem('session') }).then(response => {
         setServers(response.servers)
       })
 
       if (isAdmin) {
         RequestHandler('users', { isAdmin }).then(response => {
-
           setUsers(response);
-          // will also set application list here once it can be requested
 
+        })
+        RequestHandler('auth', { username: localStorage.getItem('username'), password: localStorage.getItem('password') }).then(response => {
+          // console.log(response)
+          console.log(response)
+          setApplications(response.applications)
         })
       }
     }
@@ -124,8 +127,7 @@ function Dashboard() {
 
 
   useEffect(() => {
-    setSelectedApp(adminApplications[0]);
-    RequestHandler('modifyapps', { isAdmin: isAdmin, applications: adminApplications });
+    setSelectedApp(adminApplications[0].appName);
     let appcheck = adminApplications.length < 1 ? 'add' : mode;
     setMode(appcheck)
   }, [adminApplications])
@@ -142,7 +144,8 @@ function Dashboard() {
 
   const updateServer = (id, updatedInfo) => {
     setServers(servers.map(server => server.id === id ? { ...server, ...updatedInfo } : server));
-    RequestHandler('add', { id: id, ...updatedInfo })
+    // console.log(adminApplications.filter(app => app.appName === updatedInfo.application)[0])
+    RequestHandler('add', { userId: localStorage.getItem('username'), id: id, ...updatedInfo, application: adminApplications.filter(app => app.appName === updatedInfo.application)[0] })
   };
 
 
@@ -159,7 +162,7 @@ function Dashboard() {
     setIsSidebarOpen(false);
 
     setIsModalBOpen(true);
-    setUserID(users[0].id);
+    setUserID(users[0].uid);
   };
 
 
@@ -192,32 +195,74 @@ function Dashboard() {
     };
 
     setServers([...servers, newServer]);
-    RequestHandler('/add', newServer);
+    RequestHandler('add', { ...newServer, userId: localStorage.getItem('username'), application: adminApplications.filter(app => app.appName === newServerApplication)[0] });
 
     setDestinationHostname('');
     setDestinationIP('');
     setDestinationPort('');
     setSourceHostname('');
     setSourceIp('');
-    setNewServerApplication('API');
+    setNewServerApplication(applications[0].appName);
 
 
     closeModal();
   };
 
+  // const handleAddUser = () => {
+
+  //   let updatedUserAppList = [...users[selectedUser].applications, addPrimedApplication];
+  //   console.log(adminApplications.filter(app => app.appName === addPrimedApplication)[0])
+  //   let finalList = [];
+
+  //   for (let i of updatedUserAppList) {
+  //     for (let j of adminApplications) {
+  //       if (i == j.appName) {
+  //         finalList.push({ appInfoId: j.appId, user_apps_uid: Math.floor(Date.now() / Math.random()), modifiedBy: localStorage.getItem('username'), createdBy: localStorage.getItem('username') })
+  //       }
+  //     }
+  //   }
+
+  //   RequestHandler('modifyuser', { isAdmin: isAdmin, id: userID, applications: finalList }); //  [{appId, createdAt, createdBy, modifiedAt, modifiedAt, modifiedBy, user_apps_uid (Date.now()) }, ...{}]
+  //   setUsers(users.map(user => user.uid === userID ? { ...user, applications: [...user.applications, addPrimedApplication] } : user));
+
+  // }
+
+  // const handleRemoveUser = () => {
+  //   let updatedUserAppList = users[selectedUser].applications.filter(app => app !== RemovePrimedApplication)
+  //   let finalList = [];
+
+  //   for (let i of updatedUserAppList) {
+  //     for (let j of adminApplications) {
+  //       if (i == j.appName) {
+  //         finalList.push({ appInfoId: j.appId, user_apps_uid: Math.floor(Date.now() / Math.random()), modifiedBy: localStorage.getItem('username'), createdBy: localStorage.getItem('username') })
+  //       }
+  //     }
+  //   }
+
+  //   RequestHandler('modifyuser', { isAdmin: isAdmin, id: userID, applications: finalList });
+  //   setUsers(users.map(user => user.uid === userID ? { ...user, applications: user.applications.filter(app => app !== RemovePrimedApplication) } : user));
+
+  // }
+
+
   const handleAddUser = () => {
 
-    RequestHandler('modifyuser', { id: userID, applications: [...users[selectedUser].applications, addPrimedApplication] });
-    setUsers(users.map(user => user.id === userID ? { ...user, applications: [...user.applications, addPrimedApplication] } : user));
+    const addedApp = adminApplications.filter(app => app.appName === addPrimedApplication)[0];
+
+
+    RequestHandler('modifyuser/add/', { isAdmin: isAdmin, id: userID, application: { appInfoId: addedApp.appId, user_apps_uid: Math.floor(Date.now() / Math.random()), modifiedBy: localStorage.getItem('username'), createdBy: localStorage.getItem('username') } }); //  [{appId, createdAt, createdBy, modifiedAt, modifiedAt, modifiedBy, user_apps_uid (Date.now()) }, ...{}]
+    setUsers(users.map(user => user.uid === userID ? { ...user, applications: [...user.applications, addPrimedApplication] } : user));
 
   }
 
   const handleRemoveUser = () => {
+    const removedApp = adminApplications.filter(app => app.appName === RemovePrimedApplication)[0];
 
-    RequestHandler('modifyuser', { id: userID, applications: users[selectedUser].applications.filter(app => app !== RemovePrimedApplication) });
-    setUsers(users.map(user => user.id === userID ? { ...user, applications: user.applications.filter(app => app !== RemovePrimedApplication) } : user));
+    RequestHandler('modifyuser/delete/', { isAdmin: isAdmin, id: userID, appInfoId: removedApp.appId });
+    setUsers(users.map(user => user.uid === userID ? { ...user, applications: user.applications.filter(app => app !== RemovePrimedApplication) } : user));
 
   }
+
 
   const toggleMode = (selectedMode) => {
     if (selectedMode === 'delete') {
@@ -230,15 +275,26 @@ function Dashboard() {
 
   const addApp = () => {
     if (newAppName.length === 3) {
-      setApplications([...adminApplications, newAppName.toUpperCase()]);
+      const genId = Date.now() * 2;
+      RequestHandler('/appInfo/add', { isAdmin: isAdmin, application: { appInfoId: genId, app_desc: newAppName.toUpperCase(), createdAt: new Date().toISOString().replace('Z', "+00:00"), modifiedAt: new Date().toISOString().replace('Z', "+00:00"), modifiedBy: localStorage.getItem('username') } });
+      setApplications([...adminApplications, { appId: genId, appName: newAppName.toUpperCase() }]);
       setNewAppName(''); // Clear input field
     }
 
   };
 
   const deleteApp = () => {
-    setApplications(adminApplications.filter(app => app !== selectedApp));
-    // Reset selected app
+    console.log(adminApplications);
+    const deletedApp = adminApplications.filter(app => app.appName === selectedApp);
+    console.log(deletedApp)
+    console.log('here')
+
+    if (deletedApp.length > 0) {
+      RequestHandler('/appInfo/delete', { isAdmin: isAdmin, application: deletedApp[0] });
+      setApplications(adminApplications.filter(app => app.appName !== selectedApp));
+    }
+
+
   };
 
   const exportData = () => {
@@ -289,7 +345,7 @@ function Dashboard() {
         )}
         {isAdmin && (
           <div className="sidebar-item" onClick={() => openModalC()}>
-            <FontAwesomeIcon icon={faRocket} /><span>Manage Application</span>
+            <FontAwesomeIcon icon={faRocket} /><span>Manage Applications</span>
           </div>
         )}
         <div className="sidebar-item" onClick={() => exportData()}>
@@ -308,7 +364,7 @@ function Dashboard() {
               <button className="close-btn" onClick={closeModal}>X</button>
             </div>
             <div className='modal-content'>
-              <span>Manage Application</span>
+              <span>Manage Applications</span>
               <div className='button-block'>
                 <button
                   onClick={() => toggleMode('add')}
@@ -338,7 +394,7 @@ function Dashboard() {
                 <div className='modal-block-app'>
                   <select value={selectedApp} onChange={(e) => setSelectedApp(e.target.value)}>
                     {adminApplications.map(app => (
-                      <option key={app} value={app}>{app}</option>
+                      <option key={app.appName} value={app.appName}>{app.appName}</option>
                     ))}
                   </select>
                   <div className='trash-button' onClick={deleteApp}>
@@ -364,7 +420,7 @@ function Dashboard() {
 
               <select id="accountswitcher" required onChange={(e) => setUserID(parseInt(e.target.value))}>
                 {users.map((user, index) => (
-                  <option key={index} value={user.id}>User: {user.id}</option>
+                  <option key={index} value={user.uid}>User: {user.uid}</option>
                 ))}
               </select>
 
@@ -380,7 +436,7 @@ function Dashboard() {
                 <div className='modal-block'>
                   <select id="addapp" required onChange={(e) => setAddPrimedApplication(e.target.value)}>
                     {unusedApps.map((application, index) => (
-                      <option key={index} value={application}>{application}</option>
+                      <option key={index} value={application.appName}>{application.appName}</option>
                     ))}
                   </select>
                   <button style={{ paddingLeft: '44px', paddingRight: '41px' }} onClick={() => { handleAddUser() }}>Add</button>
@@ -406,7 +462,7 @@ function Dashboard() {
               <form onSubmit={handleAddServer}>
                 <select required onChange={(e) => setNewServerApplication(e.target.value)}>
                   {applications.map((application, index) => (
-                    <option key={index} value={application}>{application}</option>
+                    <option key={index} value={application.appName}>{application.appName}</option>
                   ))}
                 </select>
                 <input type="text" placeholder="Destination hostname" required onChange={(e) => setDestinationHostname(e.target.value)} />
